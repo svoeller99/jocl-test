@@ -9,20 +9,20 @@ public class ArrayGPU {
      */
     private static String programSource =
             "__kernel void "+
-                    "sampleKernel(__global const float *a,"+
-                    "             __global const float *b,"+
-                    "             __global float *c)"+
+                    "sampleKernel(__global const int *a,"+
+                    "             __global const int *b,"+
+                    "             __global int *c)"+
                     "{"+
                     "    int gid = get_global_id(0);"+
-                    "    c[gid] = a[gid] + b[gid];"+
+                    "    c[gid] = a[gid] % 2 == 0 ? a[gid] : b[gid];"+
                     "}";
 
     public static void main(String args[])
     {
         int n = 10;
-        float srcArrayA[] = new float[n];
-        float srcArrayB[] = new float[n];
-        float dstArray[] = new float[n];
+        int srcArrayA[] = new int[n];
+        int srcArrayB[] = new int[n];
+        int dstArray[] = new int[n];
         for (int i=0; i<n; i++)
         {
             srcArrayA[i] = i;
@@ -84,13 +84,13 @@ public class ArrayGPU {
         cl_mem memObjects[] = new cl_mem[3];
         memObjects[0] = CL.clCreateBuffer(context,
                 CL.CL_MEM_READ_ONLY | CL.CL_MEM_COPY_HOST_PTR,
-                Sizeof.cl_float * n, srcA, null);
+                Sizeof.cl_int * n, srcA, null);
         memObjects[1] = CL.clCreateBuffer(context,
                 CL.CL_MEM_READ_ONLY | CL.CL_MEM_COPY_HOST_PTR,
-                Sizeof.cl_float * n, srcB, null);
+                Sizeof.cl_int * n, srcB, null);
         memObjects[2] = CL.clCreateBuffer(context,
                 CL.CL_MEM_READ_WRITE,
-                Sizeof.cl_float * n, null, null);
+                Sizeof.cl_int * n, null, null);
 
         // Create the program from the source code
         cl_program program = CL.clCreateProgramWithSource(context,
@@ -120,7 +120,7 @@ public class ArrayGPU {
 
         // Read the output data
         CL.clEnqueueReadBuffer(commandQueue, memObjects[2], CL.CL_TRUE, 0,
-                n * Sizeof.cl_float, dst, 0, null, null);
+                n * Sizeof.cl_int, dst, 0, null, null);
 
         // Release kernel, program, and memory objects
         CL.clReleaseMemObject(memObjects[0]);
