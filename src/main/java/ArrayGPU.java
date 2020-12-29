@@ -2,6 +2,7 @@ import org.jocl.*;
 
 import java.util.Arrays;
 
+// from https://blogs.oracle.com/javamagazine/programming-the-gpu-in-java
 public class ArrayGPU {
     /**
      * The source code of the OpenCL program
