@@ -13,13 +13,15 @@ public class ArrayGPU {
      */
     private static String programSource;
 
-    public static final String KERNEL_NAME = "sampleKernel";
+    public static final String KERNEL_NAME = "MatrixMul_kernel_basic";
+
+    public static final String MATRIX_MUL_KERNEL_BASIC_CL = "/MatrixMul_kernel_basic.cl"; // KERNEL_NAME = "MatrixMul_kernel_basic";
 
     public static final String ARRAY_GPU_BASIC_CL = "/ArrayGPU_basic.cl"; // KERNEL_NAME = "sampleKernel";
 
     static {
         try {
-            programSource = new String(Files.readAllBytes(Paths.get(ArrayGPU.class.getResource(ARRAY_GPU_BASIC_CL).toURI())));
+            programSource = new String(Files.readAllBytes(Paths.get(ArrayGPU.class.getResource(MATRIX_MUL_KERNEL_BASIC_CL).toURI())));
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
             System.exit(1);
@@ -112,11 +114,12 @@ public class ArrayGPU {
         cl_kernel kernel = CL.clCreateKernel(program, KERNEL_NAME, null);
 
         // Set the arguments for the kernel
-        CL.clSetKernelArg(kernel, 0,
-                Sizeof.cl_mem, Pointer.to(memObjects[0]));
+        CL.clSetKernelArg(kernel, 0, Sizeof.cl_int, Pointer.to(new int[]{2}));
         CL.clSetKernelArg(kernel, 1,
-                Sizeof.cl_mem, Pointer.to(memObjects[1]));
+                Sizeof.cl_mem, Pointer.to(memObjects[0]));
         CL.clSetKernelArg(kernel, 2,
+                Sizeof.cl_mem, Pointer.to(memObjects[1]));
+        CL.clSetKernelArg(kernel, 3,
                 Sizeof.cl_mem, Pointer.to(memObjects[2]));
 
         // Set the work-item dimensions
