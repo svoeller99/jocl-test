@@ -1,5 +1,9 @@
 import org.jocl.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 // from https://blogs.oracle.com/javamagazine/programming-the-gpu-in-java
@@ -7,15 +11,20 @@ public class ArrayGPU {
     /**
      * The source code of the OpenCL program
      */
-    private static String programSource =
-            "__kernel void "+
-                    "sampleKernel(__global const float *a,"+
-                    "             __global const float *b,"+
-                    "             __global float *c)"+
-                    "{"+
-                    "    int gid = get_global_id(0);"+
-                    "    c[gid] = a[gid] + b[gid];"+
-                    "}";
+    private static String programSource;
+
+    public static final String KERNEL_NAME = "sampleKernel";
+
+    public static final String ARRAY_GPU_BASIC_CL = "/ArrayGPU_basic.cl"; // KERNEL_NAME = "sampleKernel";
+
+    static {
+        try {
+            programSource = new String(Files.readAllBytes(Paths.get(ArrayGPU.class.getResource(ARRAY_GPU_BASIC_CL).toURI())));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     public static void main(String args[])
     {
@@ -100,7 +109,7 @@ public class ArrayGPU {
         CL.clBuildProgram(program, 0, null, null, null, null);
 
         // Create the kernel
-        cl_kernel kernel = CL.clCreateKernel(program, "sampleKernel", null);
+        cl_kernel kernel = CL.clCreateKernel(program, KERNEL_NAME, null);
 
         // Set the arguments for the kernel
         CL.clSetKernelArg(kernel, 0,
