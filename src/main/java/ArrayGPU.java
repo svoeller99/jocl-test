@@ -46,6 +46,7 @@ public class ArrayGPU {
         int numPlatformsArray[] = new int[1];
         CL.clGetPlatformIDs(0, null, numPlatformsArray);
         int numPlatforms = numPlatformsArray[0];
+        System.out.println("Number of platforms: " + numPlatforms);
 
         // Obtain a platform ID
         cl_platform_id platforms[] = new cl_platform_id[numPlatforms];
@@ -60,11 +61,15 @@ public class ArrayGPU {
         int numDevicesArray[] = new int[1];
         CL.clGetDeviceIDs(platform, deviceType, 0, null, numDevicesArray);
         int numDevices = numDevicesArray[0];
+        System.out.println("Number of devices: " + numDevices);
 
         // Obtain a device ID
         cl_device_id devices[] = new cl_device_id[numDevices];
         CL.clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
         cl_device_id device = devices[deviceIndex];
+        for (int i = 0 ; i < numDevices ; i++) {
+            System.out.println(devices[i].toString());
+        }
 
         // Create a context for the selected device
         cl_context context = CL.clCreateContext(
