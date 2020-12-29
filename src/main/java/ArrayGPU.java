@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 // from https://blogs.oracle.com/javamagazine/programming-the-gpu-in-java
+// see also https://github.com/gpu/JOCLSamples/tree/master/src/main/java/org/jocl/samples
 public class ArrayGPU {
     /**
      * The source code of the OpenCL program
